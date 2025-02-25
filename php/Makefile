@@ -1,4 +1,4 @@
-.PHONY: all tests
+.PHONY: all tests dev-build dev-up dev-attach dev-down dev-clean dev-tests
 
 all: composer-update
 
@@ -35,6 +35,8 @@ dev-clean: dev-down
 	docker-compose rm -fv
 	docker container prune -f
 	docker image prune -f
+	docker builder prune -f
+	docker system prune -f
 
 
 # 最终测试用命令
