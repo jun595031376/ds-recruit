@@ -23,9 +23,9 @@ class MyGreeter
      * @return string
      * 根据当前时间返回对应的问候语
      */
-    public function greeting(){
-        $now = strtotime(date("H:i:s"));
-    
+    public function greeting($now = ''){
+        // 如果没有传入时间，使用当前时间
+        $now === '' && $now = strtotime(date("H:i:s"));
         foreach ($this->rules as $rule) {
             if (!isset($rule["time"]) || !is_array($rule["time"]) || count($rule["time"]) !== 2) {
                 continue; // 跳过格式不正确的规则

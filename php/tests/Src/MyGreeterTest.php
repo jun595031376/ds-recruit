@@ -1,64 +1,71 @@
 <?php
 
+namespace Tests;
+
 use PHPUnit\Framework\TestCase;
 use Src\MyGreeter;
 
-
 /**
  * Class MyGreeterTest
- * 测试MyGreeter类
- * 
- * 基于原始MyGreaterTest类调整了测试用例，test_greeting方法中增加了对返回的问候语是否在规则中的判断
+ * @package Tests
  */
 class MyGreeterTest extends TestCase
 {
-    private MyGreeter $greeter;
+    private $greeter;
 
-    /**
-     * @var array
-     * 问候语数组
+    /** 
+     * 初始化测试环境
      */
-    private $msgArr = [
-        "Good morning",
-        "Good afternoon",
-        "Good evening"
-    ];
-
-    /**
-     * 初始化方法
-     */
-    public function setUp(): void
+    protected function setUp(): void
     {
-        
-        /**
-         * 原始的初始化方法未调用父类的初始化方法
-         */
-        parent::setUp();
         $this->greeter = new MyGreeter();
     }
 
     /**
-     * 测试初始化方法
+     * 测试 setUp 方法是否正确初始化了 $this->greeter 属性
      */
+
     public function test_init()
     {
+        // 调用 setUp 方法
+        $this->setUp();
+        // 断言 $this->greeter 是 MyGreeter 类的一个实例
         $this->assertInstanceOf(
             MyGreeter::class,
             $this->greeter
         );
     }
 
-    /**
-     * 测试问候语
-     */
+
+    public function test_greeting_morning()
+    {
+        // 测试早晨时间段，验证在 06:00:00 和 11:59:59 时返回 "Good morning"
+        $this->assertEquals("Good morning", $this->greeter->greeting(strtotime("06:00:00")));
+        $this->assertEquals("Good morning", $this->greeter->greeting(strtotime("11:59:59")));
+    }
+
+    public function test_greeting_afternoon()
+    {
+        // 测试下午时间段，验证在 12:00:00 和 17:59:59 时返回 "Good afternoon"
+        $this->assertEquals("Good afternoon", $this->greeter->greeting(strtotime("12:00:00")));
+        $this->assertEquals("Good afternoon", $this->greeter->greeting(strtotime("17:59:59")));
+    }
+
+    public function test_greeting_evening()
+    {
+        // 测试晚上时间段，验证在 05:59:59、18:00:00 和 23:59:59 时返回 "Good evening"
+        $this->assertEquals("Good evening", $this->greeter->greeting(strtotime("05:59:59")));
+        $this->assertEquals("Good evening", $this->greeter->greeting(strtotime("18:00:00")));
+        $this->assertEquals("Good evening", $this->greeter->greeting(strtotime("23:59:59")));
+    }
+
+    public function test_greeting_invalid_rule()
+    {
+        $this->assertEquals("No matching greeting rule found", $this->greeter->greeting(strtotime("25:00:00")));
+    }
+
     public function test_greeting()
     {
-        // echo $this->greeter->greeting();
-        /** 
-         * 判断返回的问候语是否在规则中
-         */
-        $this->assertTrue(
-            in_array($this->greeter->greeting(), $this->msgArr)
-        );
+        $this->assertNotEmpty($this->greeter->greeting());
     }
 }
